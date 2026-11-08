@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة بيانات المعلمين والموظفين - تصميم وتطوير محمد نمر دريغ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f1f5f9; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800">
+
+    <!-- 1. Header / الشريط العلوي -->
+    <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl border-b-4 border-amber-500 sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- الجانب الأيمن: بيانات المدرسة والشعار -->
+            <div class="flex items-center gap-3">
+                <div id="headerLogoContainer" class="w-14 h-14 bg-white/10 rounded-xl p-1 border border-amber-400/30 flex items-center justify-center overflow-hidden">
+                    <i class="fa-solid fa-school text-amber-400 text-2xl" id="headerDefaultLogo"></i>
+                    <img id="headerLogoImg" src="" alt="شعار المدرسة" class="w-full h-full object-contain hidden">
+                </div>
+                <div>
+                    <h1 id="headerSchoolName" class="text-xl font-extrabold text-amber-400">منصة بيانات المعلمين والموظفين</h1>
+                    <div class="flex items-center gap-2 text-xs text-slate-300 font-semibold mt-0.5">
+                        <span id="headerDirectorate">مديرية التربية والتعليم</span>
+                        <span>•</span>
+                        <span id="headerSubDirectorate">القسم التربوي</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الجانب الأيسر: معلومات المطور المخصصة -->
+            <div class="flex items-center gap-4 border-t md:border-t-0 md:border-r border-slate-700/60 pt-2 md:pt-0 md:pr-4">
+                <div class="text-left bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <div class="text-xs text-amber-400 font-bold flex items-center gap-1.5 justify-end">
+                        <i class="fa-solid fa-code"></i> المصمم والمطور: محمد نمر دريغ
+                    </div>
+                    <div class="text-[11px] text-slate-300 flex items-center gap-2 justify-end mt-0.5">
+                        <span class="font-mono"><i class="fa-solid fa-phone text-amber-400 text-[10px]"></i> 07854907725</span>
+                    </div>
+                </div>
+
+                <!-- زر التبديل بين اللوحة ووضع المعلم -->
+                <button onclick="toggleAdminView()" id="viewSwitchBtn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow-md transition">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span id="viewSwitchLabel">تسجيل خروج / وضع المعلم</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. Main Navigation Bar / شريط التبويبات -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40 no-print">
+        <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 py-2" id="adminNavTabs">
+            <button onclick="switchTab('dashboard')" class="tab-btn bg-indigo-50 text-indigo-700 font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap active-tab">
+                <i class="fa-solid fa-gauge-high"></i> لوحة التحكم
+            </button>
+            <button onclick="switchTab('teachers')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-users-gear"></i> سجل المعلمين
+            </button>
+            <button onclick="switchTab('add-teacher')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-user-plus"></i> إضافة معلم جديد
+            </button>
+            <button onclick="switchTab('invitations')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-paper-plane"></i> دعوات المعلمين (واتساب)
+            </button>
+            <button onclick="switchTab('reports')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-file-invoice"></i> التقارير المكتملة
+            </button>
+            <button onclick="switchTab('school-settings')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-sliders"></i> إعدادات المدرسة
+            </button>
+        </div>
+    </nav>
+
+    <!-- 3. Main Content Wrapper -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full">
+
+        <!-- TAB: DASHBOARD -->
+        <section id="dashboard" class="tab-content active space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">إجمالي الكادر المسجل</p>
+                        <h3 class="text-2xl font-black text-slate-800" id="statTotalTeachers">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-arrow-up-right-dots"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">المستحقين للترفيع قريبًا</p>
+                        <h3 class="text-2xl font-black text-slate-800" id="statPromotions">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">المستحقين للعلاوة</p>
+                        <h3 class="text-2xl font-black text-slate-800" id="statAllowances">0</h3>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">الدعوات والروابط النشطة</p>
+                        <h3 class="text-2xl font-black text-slate-800" id="statInvitations">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Search Bar -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-indigo-600"></i> البحث السريع والاستعلام
+                </h2>
+                <div class="relative">
+                    <input type="text" id="dashboardSearch" onkeyup="filterTeachers(this.value)" placeholder="ابحث باسم المعلم، الرقم الوظيفي، أو الاختصاص..." class="w-full bg-slate-50 border border-slate-300 text-slate-900 rounded-xl pr-10 pl-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <i class="fa-solid fa-search absolute right-3.5 top-3.5 text-slate-400"></i>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">المعلم / الموظف</th>
+                                <th class="p-3">الرقم الوظيفي</th>
+                                <th class="p-3">العنوان الوظيفي والشهادة</th>
+                                <th class="p-3">تاريخ استحقاق الترفيع</th>
+                                <th class="p-3">الحالة الاجتماعية</th>
+                                <th class="p-3 text-center">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersTableBody" class="divide-y divide-slate-200">
+                            <tr><td colspan="6" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: TEACHERS RECORD / سجل المعلمين -->
+        <section id="teachers" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-users-gear text-indigo-600"></i> سجل الكادر الكامل
+                    </h2>
+                    <button onclick="switchTab('add-teacher')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-user-plus"></i> إضافة معلم جديد
+                    </button>
+                </div>
+                <div id="fullTeachersContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <p class="text-slate-400 text-sm col-span-full text-center py-6">لا توجد بيانات مسجلة حالياً.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: ADD TEACHER / إضافة معلم جديد -->
+        <section id="add-teacher" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-indigo-600"></i> استمارة إضافة بيانات معلم أو موظف جديد
+                </h2>
+                <form id="teacherForm" onsubmit="saveTeacherData(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الاسم الرباعي واللقب *</label>
+                            <input type="text" id="tName" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اسم الام الثلاثي *</label>
+                            <input type="text" id="tMotherName" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ الميلاد *</label>
+                            <input type="date" id="tBirthDate" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الرقم الوظيفي *</label>
+                            <input type="text" id="tJobNumber" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">العنوان الوظيفي *</label>
+                            <input type="text" id="tJobTitle" required placeholder="معلم، مدرس، إداري..." class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">المنصب الإداري</label>
+                            <input type="text" id="tAdminPosition" placeholder="معاون، مرشد، مدير..." class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الشهادة الأخيرة *</label>
+                            <input type="text" id="tDegree" required placeholder="بكالوريوس، ماجستير..." class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الاختصاص *</label>
+                            <input type="text" id="tMajor" required placeholder="رياضيات، لغة عربية، أحياء..." class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">سنة التخرج</label>
+                            <input type="number" id="tGradYear" placeholder="2015" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ التعيين</label>
+                            <input type="date" id="tHireDate" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ المباشرة لأول مرة</label>
+                            <input type="date" id="tFirstStart" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ المباشرة في المدرسة الحالية</label>
+                            <input type="date" id="tCurrentSchoolStart" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الحالة الاجتماعية *</label>
+                            <select id="tSocialStatus" onchange="toggleMarriageFields()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                                <option value="أعزب">أعزب / عزباء</option>
+                                <option value="متزوج">متزوج / متزوجة</option>
+                            </select>
+                        </div>
+                        <div id="wifeNameContainer" class="hidden">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اسم الزوجة / الزوج</label>
+                            <input type="text" id="tWifeName" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div id="marriageDateContainer" class="hidden">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ الزواج</label>
+                            <input type="date" id="tMarriageDate" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">عدد الأطفال</label>
+                            <input type="number" id="tChildrenCount" value="0" min="0" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ استحقاق الترفيع</label>
+                            <input type="date" id="tPromotionDate" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ استحقاق العلاوة</label>
+                            <input type="date" id="tAllowanceDate" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">عنوان السكن بالتفصيل *</label>
+                            <input type="text" id="tAddress" required placeholder="المحافظة - الحي - الشارع - رقم المنزل" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl text-sm shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> حفظ وحفظ بيانات المعلم في المنصة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB: INVITATIONS / دعوات الهواتف -->
+        <section id="invitations" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode text-indigo-600"></i> إرسال بطاقة دعوة للمعلم عبر الواتساب
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اسم المعلم المدعو</label>
+                            <input type="text" id="invTeacherName" placeholder="أدخل اسم المعلم الثلاثي أو الرباعي" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">رقم هاتف المعلم</label>
+                            <input type="text" id="invTeacherPhone" placeholder="078xxxxxxx" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <button onclick="generateInvitationCard()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 shadow-md">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> إنشاء بطاقة الدعوة ورابط الإدخال
+                        </button>
+                    </div>
+                    <div id="invitationResultCard" class="hidden bg-slate-50 p-5 rounded-2xl border-2 border-dashed border-emerald-300 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">بطاقة جاهزة للإرسال</span>
+                            <span id="invCodeBadge" class="font-mono font-bold text-indigo-700 text-xs"></span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 font-mono whitespace-pre-line" id="invTextMessage"></div>
+                        
+                        <!-- زرين: نسخ النص + فتح واتساب -->
+                        <div class="flex gap-2">
+                            <button onclick="copyInvitationText()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow">
+                                <i class="fa-solid fa-copy"></i> نسخ النص
+                            </button>
+                            <button onclick="sendViaWhatsApp()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow">
+                                <i class="fa-brands fa-whatsapp"></i> فتح واتساب
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-500 text-center">ملاحظة: تم نسخ النص تلقائياً، اضغط (Ctrl + V) بعد فتح الواتساب للصق الدعوة مباشرة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: REPORTS & BACKUP / التقارير والنسخ الاحتياطي -->
+        <section id="reports" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-indigo-600"></i> التقارير والنسخ الاحتياطي
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-xl space-y-3">
+                        <h3 class="font-bold text-indigo-900 text-sm">طباعة تقرير الكادر الكلي</h3>
+                        <p class="text-xs text-indigo-700">طباعة جدول كادر المدرسة الرسمي المكتمل.</p>
+                        <button onclick="printFullReport()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i> طباعة التقرير الكلي PDF
+                        </button>
+                    </div>
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                        <h3 class="font-bold text-slate-800 text-sm">تصدير قاعدة البيانات (Backup)</h3>
+                        <p class="text-xs text-slate-600">تصدير ملف احتياطي (JSON) لكافة بيانات المعلمين والمستندات.</p>
+                        <button onclick="exportJSONData()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-download"></i> تصدير النسخة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: SCHOOL SETTINGS / إعدادات المدرسة -->
+        <section id="school-settings" class="tab-content space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-school text-indigo-600"></i> إعدادات المدرسة والتربية
+                </h2>
+                <form id="schoolSettingsForm" onsubmit="saveSchoolSettings(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اسم مديرية التربية</label>
+                            <input type="text" id="settingDirectorate" required placeholder="مثال: مديرية تربية ذي قار" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">القسم التربوي / المركز</label>
+                            <input type="text" id="settingSubDirectorate" required placeholder="مثال: قسم الناصرية التربوي" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اسم المدرسة الحالية</label>
+                            <input type="text" id="settingSchoolName" required placeholder="مثال: مدرسة النسمات الابتدائية للبنين" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">شعار المدرسة الرسمية (صورة)</label>
+                        <input type="file" id="settingLogoFile" accept="image/*" class="w-full border border-slate-300 rounded-xl p-2 text-sm bg-slate-50">
+                    </div>
+                    <div class="pt-2 flex justify-end">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات والشعار
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 4. Footer / شريط الحقوق السفلي -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-4 mt-auto no-print">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between text-xs gap-2">
+            <div>
+                <span>جميع الحقوق محفوظة © للاستاذ <strong class="text-amber-400 font-bold">محمد الدراجي</strong></span>
+            </div>
+            <div class="text-slate-500">
+                تصميم وتطوير: منصة بيانات المعلمين والموظفين • إصدار أوفلاين مخصص
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts / البرمجة التفاعلية والتخزين المحلي -->
+    <script>
+        let ADMIN_PIN = "1234";
+        let db;
+        let schoolConfig = {
+            directorate: "مديرية التربية والتعليم",
+            subDirectorate: "القسم التربوي",
+            schoolName: "منصة بيانات المعلمين والموظفين",
+            logo: ""
+        };
+        let teachersList = [];
+
+        function initDB() {
+            const request = indexedDB.open("TeachersPlatformDB", 3);
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                if (!db.objectStoreNames.contains("teachers")) {
+                    db.createObjectStore("teachers", { keyPath: "id", autoIncrement: true });
+                }
+                if (!db.objectStoreNames.contains("config")) {
+                    db.createObjectStore("config", { keyPath: "key" });
+                }
+            };
+            request.onsuccess = (e) => {
+                db = e.target.result;
+                loadConfig();
+                loadTeachers();
+            };
+        }
+
+        function loadConfig() {
+            const transaction = db.transaction(["config"], "readonly");
+            const store = transaction.objectStore("config");
+            const request = store.get("school_info");
+            request.onsuccess = () => {
+                if (request.result) {
+                    schoolConfig = request.result.data;
+                    updateHeaderUI();
+                    document.getElementById('settingDirectorate').value = schoolConfig.directorate || '';
+                    document.getElementById('settingSubDirectorate').value = schoolConfig.subDirectorate || '';
+                    document.getElementById('settingSchoolName').value = schoolConfig.schoolName || '';
+                }
+            };
+        }
+
+        function saveSchoolSettings(e) {
+            e.preventDefault();
+            const dir = document.getElementById('settingDirectorate').value;
+            const subDir = document.getElementById('settingSubDirectorate').value;
+            const schoolName = document.getElementById('settingSchoolName').value;
+            const logoInput = document.getElementById('settingLogoFile');
+
+            const processSave = (logoBase64) => {
+                schoolConfig = {
+                    directorate: dir,
+                    subDirectorate: subDir,
+                    schoolName: schoolName,
+                    logo: logoBase64 || schoolConfig.logo
+                };
+                const tx = db.transaction(["config"], "readwrite");
+                tx.objectStore("config").put({ key: "school_info", data: schoolConfig });
+                tx.oncomplete = () => {
+                    updateHeaderUI();
+                    alert("تم حفظ إعدادات المدرسة والشعار بنجاح!");
+                };
+            };
+
+            if (logoInput.files && logoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (ev) => processSave(ev.target.result);
+                reader.readAsDataURL(logoInput.files[0]);
+            } else {
+                processSave(null);
+            }
+        }
+
+        function updateHeaderUI() {
+            document.getElementById('headerSchoolName').innerText = schoolConfig.schoolName || "منصة بيانات المعلمين والموظفين";
+            document.getElementById('headerDirectorate').innerText = schoolConfig.directorate || "مديرية التربية والتعليم";
+            document.getElementById('headerSubDirectorate').innerText = schoolConfig.subDirectorate || "القسم التربوي";
+            
+            const logoImg = document.getElementById('headerLogoImg');
+            const defaultLogo = document.getElementById('headerDefaultLogo');
+            if (schoolConfig.logo) {
+                logoImg.src = schoolConfig.logo;
+                logoImg.classList.remove('hidden');
+                defaultLogo.classList.add('hidden');
+            } else {
+                logoImg.classList.add('hidden');
+                defaultLogo.classList.remove('hidden');
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-bold'));
+            
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+        }
+
+        function toggleAdminView() {
+            const pin = prompt("الرجاء إدخال كلمة مرور الإدارة (الافتراضي 1234):");
+            if (pin === ADMIN_PIN) {
+                alert("تم التحقق بنجاح. أهلاً بك في لوحة الإدارة.");
+                switchTab('dashboard');
+            } else if (pin !== null) {
+                alert("رمز المرور غير صحيح!");
+            }
+        }
+
+        function toggleMarriageFields() {
+            const status = document.getElementById('tSocialStatus').value;
+            const wifeContainer = document.getElementById('wifeNameContainer');
+            const marriageContainer = document.getElementById('marriageDateContainer');
+            if (status === 'متزوج') {
+                wifeContainer.classList.remove('hidden');
+                marriageContainer.classList.remove('hidden');
+            } else {
+                wifeContainer.classList.add('hidden');
+                marriageContainer.classList.add('hidden');
+            }
+        }
+
+        function saveTeacherData(e) {
+            e.preventDefault();
+            const teacherData = {
+                name: document.getElementById('tName').value,
+                motherName: document.getElementById('tMotherName').value,
+                birthDate: document.getElementById('tBirthDate').value,
+                jobNumber: document.getElementById('tJobNumber').value,
+                jobTitle: document.getElementById('tJobTitle').value,
+                adminPosition: document.getElementById('tAdminPosition').value,
+                degree: document.getElementById('tDegree').value,
+                major: document.getElementById('tMajor').value,
+                gradYear: document.getElementById('tGradYear').value,
+                hireDate: document.getElementById('tHireDate').value,
+                firstStart: document.getElementById('tFirstStart').value,
+                currentSchoolStart: document.getElementById('tCurrentSchoolStart').value,
+                socialStatus: document.getElementById('tSocialStatus').value,
+                wifeName: document.getElementById('tWifeName').value,
+                marriageDate: document.getElementById('tMarriageDate').value,
+                childrenCount: document.getElementById('tChildrenCount').value,
+                promotionDate: document.getElementById('tPromotionDate').value,
+                allowanceDate: document.getElementById('tAllowanceDate').value,
+                address: document.getElementById('tAddress').value,
+                createdAt: new Date().toISOString()
+            };
+
+            const tx = db.transaction(["teachers"], "readwrite");
+            const store = tx.objectStore("teachers");
+            store.add(teacherData);
+            tx.oncomplete = () => {
+                alert("تم حفظ بيانات المعلم بنجاح وإضافته إلى المنصة!");
+                document.getElementById('teacherForm').reset();
+                loadTeachers();
+                switchTab('teachers');
+            };
+        }
+
+        function loadTeachers() {
+            if (!db) return;
+            const tx = db.transaction(["teachers"], "readonly");
+            const store = tx.objectStore("teachers");
+            const request = store.getAll();
+            request.onsuccess = () => {
+                teachersList = request.result || [];
+                updateDashboardStats();
+                renderTeachersTable(teachersList);
+                renderFullTeachersCards(teachersList);
+            };
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('statTotalTeachers').innerText = teachersList.length;
+            document.getElementById('statPromotions').innerText = teachersList.filter(t => t.promotionDate).length;
+            document.getElementById('statAllowances').innerText = teachersList.filter(t => t.allowanceDate).length;
+            document.getElementById('statInvitations').innerText = "0";
+        }
+
+        function renderTeachersTable(list) {
+            const tbody = document.getElementById('teachersTableBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(t => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold text-slate-800">${t.name}</td>
+                    <td class="p-3 font-mono">${t.jobNumber || '-'}</td>
+                    <td class="p-3">${t.jobTitle} (${t.degree})</td>
+                    <td class="p-3 font-mono">${t.promotionDate || '-'}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">${t.socialStatus}</span></td>
+                    <td class="p-3 text-center">
+                        <button onclick="alert('عرض صفحة المعلم: ${t.name}')" class="bg-slate-100 hover:bg-indigo-600 hover:text-white p-2 rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-eye"></i> ملف
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderFullTeachersCards(list) {
+            const container = document.getElementById('fullTeachersContainer');
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-sm col-span-full text-center py-6">لا توجد بيانات مسجلة حالياً.</p>`;
+                return;
+            }
+            container.innerHTML = list.map(t => `
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-slate-900">${t.name}</h3>
+                            <p class="text-xs text-indigo-600 font-semibold">${t.jobTitle} - ${t.major}</p>
+                        </div>
+                        <span class="text-xs font-mono bg-slate-200 px-2 py-1 rounded">${t.jobNumber}</span>
+                    </div>
+                    <div class="text-xs text-slate-600 space-y-1">
+                        <p><strong>تاريخ التعيين:</strong> ${t.hireDate || 'غير محدد'}</p>
+                        <p><strong>استحقاق الترفيع:</strong> ${t.promotionDate || 'غير محدد'}</p>
+                        <p><strong>السكن:</strong> ${t.address}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterTeachers(query) {
+            const filtered = teachersList.filter(t => 
+                t.name.includes(query) || (t.jobNumber && t.jobNumber.includes(query)) || t.major.includes(query)
+            );
+            renderTeachersTable(filtered);
+        }
+
+        function generateInvitationCard() {
+            const name = document.getElementById('invTeacherName').value;
+            const phone = document.getElementById('invTeacherPhone').value;
+            if (!name) { alert("يرجى إدخال اسم المعلم أولاً"); return; }
+
+            const code = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+            const msg = `الأستاذ/ة المحترم/ة: ${name}\nتحية طيبة..\nيرجى إدخال بياناتك الوظيفية ومرفقاتك الرسمية عبر الرابط:\nhttps://mohammed-aldarajy.github.io/elia-platform/#entry?code=${code}\nرمز التفعيل: [ ${code} ]`;
+
+            document.getElementById('invTextMessage').innerText = msg;
+            document.getElementById('invCodeBadge').innerText = code;
+            document.getElementById('invitationResultCard').classList.remove('hidden');
+            window.lastPhone = phone;
+            window.lastMsg = msg;
+
+            // نسخ النص تلقائياً للحافظة لحل مشكلة واتساب ويب
+            navigator.clipboard.writeText(msg).catch(err => console.log('Clipboard err', err));
+        }
+
+        function copyInvitationText() {
+            if (!window.lastMsg) return;
+            navigator.clipboard.writeText(window.lastMsg).then(() => {
+                alert("تم نسخ نص الدعوة بنجاح! يمكنك لصقه مباشرة في الواتساب (Ctrl + V)");
+            });
+        }
+
+        function sendViaWhatsApp() {
+            if (!window.lastMsg) return;
+            // نسخ النص مرة أخرى للتأكيد
+            navigator.clipboard.writeText(window.lastMsg);
+            const cleanPhone = (window.lastPhone || '').replace(/[^0-9]/g, '');
+            const url = `https://web.whatsapp.com/send?phone=${cleanPhone}`;
+            window.open(url, '_blank');
+        }
+
+        function printFullReport() { window.print(); }
+
+        function exportJSONData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ schoolConfig, teachersList }));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "Teachers_Platform_Backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        window.onload = () => { initDB(); };
+    </script>
+</body>
+</html>

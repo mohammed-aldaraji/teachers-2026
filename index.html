@@ -28,7 +28,6 @@
     <!-- Header / الشريط العلوي -->
     <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl border-b-4 border-amber-500 sticky top-0 z-50 no-print" id="mainHeader">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
-            
             <div class="flex items-center gap-3">
                 <div id="headerLogoContainer" class="w-14 h-14 bg-white/10 rounded-xl p-1 border border-amber-400/30 flex items-center justify-center overflow-hidden">
                     <i class="fa-solid fa-school text-amber-400 text-2xl" id="headerDefaultLogo"></i>
@@ -64,16 +63,16 @@
                 <i class="fa-solid fa-gauge-high"></i> لوحة التحكم
             </button>
             <button onclick="switchTab('teachers')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-users-gear"></i> سجل المعلمين
+                <i class="fa-solid fa-users-gear"></i> سجل المعلمين الشامل
             </button>
             <button onclick="switchTab('add-teacher')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-user-plus"></i> إضافة معلم يدوي
+                <i class="fa-solid fa-user-plus"></i> إضافة معلم يدوي / استقبال بيانات
             </button>
             <button onclick="switchTab('invitations')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
                 <i class="fa-solid fa-paper-plane"></i> دعوات المعلمين (واتساب)
             </button>
             <button onclick="switchTab('reports')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
-                <i class="fa-solid fa-file-invoice"></i> التقارير المكتملة
+                <i class="fa-solid fa-file-invoice"></i> التقارير والطباعة
             </button>
             <button onclick="switchTab('school-settings')" class="tab-btn hover:bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap">
                 <i class="fa-solid fa-sliders"></i> إعدادات المدرسة
@@ -112,44 +111,68 @@
                                 <th class="p-3">العنوان الوظيفي والشهادة</th>
                                 <th class="p-3">تاريخ استحقاق الترفيع</th>
                                 <th class="p-3">الحالة الاجتماعية</th>
+                                <th class="p-3 text-center">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="teachersTableBody" class="divide-y divide-slate-200">
-                            <tr><td colspan="5" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>
+                            <tr><td colspan="6" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- TAB: TEACHERS RECORD -->
+        <!-- TAB: TEACHERS RECORD (الشامل بكافة الحقول) -->
         <section id="teachers" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-3">سجل الكادر الكامل</h2>
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <h2 class="text-xl font-bold text-slate-800">سجل الكادر الشامل (كافة تفاصيل الاستمارة)</h2>
+                    <button onclick="window.print()" class="no-print bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> طباعة السجل الكامل
+                    </button>
+                </div>
                 <div class="overflow-x-auto rounded-xl border border-slate-200">
-                    <table class="w-full text-right text-sm">
+                    <table class="w-full text-right text-xs">
                         <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                             <tr>
-                                <th class="p-3">الاسم الرباعي</th>
-                                <th class="p-3">اسم الأم</th>
-                                <th class="p-3">الرقم الوظيفي</th>
-                                <th class="p-3">العنوان الوظيفي</th>
-                                <th class="p-3">الشهادة والاختصاص</th>
-                                <th class="p-3">السكن</th>
+                                <th class="p-2.5">الاسم الرباعي</th>
+                                <th class="p-2.5">اسم الأم</th>
+                                <th class="p-2.5">تاريخ الميلاد</th>
+                                <th class="p-2.5">الرقم الوظيفي</th>
+                                <th class="p-2.5">العنوان الوظيفي</th>
+                                <th class="p-2.5">المنصب</th>
+                                <th class="p-2.5">الشهادة والاختصاص</th>
+                                <th class="p-2.5">تاريخ التعيين</th>
+                                <th class="p-2.5">الحالة الاجتماعية</th>
+                                <th class="p-2.5">الترفيع / العلاوة</th>
+                                <th class="p-2.5">السكن</th>
+                                <th class="p-2.5 text-center no-print">بطاقة</th>
                             </tr>
                         </thead>
                         <tbody id="fullTeachersTableBody" class="divide-y divide-slate-200">
-                            <tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد بيانات مسجلة حالياً</td></tr>
+                            <tr><td colspan="12" class="p-4 text-center text-slate-400">لا توجد بيانات مسجلة حالياً</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- TAB: ADD TEACHER -->
+        <!-- TAB: ADD TEACHER & IMPORT -->
         <section id="add-teacher" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
                 
+                <!-- صندوق استلام بيانات المعلم من جهازه -->
+                <div id="importTeacherBox" class="no-print p-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-3">
+                    <h3 class="text-sm font-bold text-emerald-900 flex items-center gap-2">
+                        <i class="fa-solid fa-file-import text-emerald-600"></i> استقبال بيانات معلم أرسلها عبر الواتساب
+                    </h3>
+                    <p class="text-xs text-emerald-700">إذا أرسل المعلم بياناته النصية، الصق النص هنا ثم اضغط إدراج لتضاف فوراً للسجل:</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="importJsonInput" placeholder="الصق بيانات المعلم هنا..." class="flex-1 border border-emerald-300 rounded-xl p-2.5 text-xs bg-white">
+                        <button onclick="importTeacherData()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow">إدراج للسجل</button>
+                    </div>
+                </div>
+
                 <div id="teacherWelcomeBanner" class="hidden p-4 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center justify-between">
                     <div>
                         <h2 class="text-base font-bold text-indigo-900"><i class="fa-solid fa-mobile-screen"></i> بوابة إدخال البيانات الشخصية للمعلم</h2>
@@ -239,7 +262,7 @@
 
                     <div class="flex justify-end pt-4">
                         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl text-sm shadow-md flex items-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> إرسال البيانات وحفظها في المنصة
+                            <i class="fa-solid fa-paper-plane"></i> حفظ وإرسال البيانات
                         </button>
                     </div>
                 </form>
@@ -289,12 +312,12 @@
         <section id="reports" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <h2 class="text-xl font-bold text-slate-800">التقارير المكتملة والنسخ الاحتياطي</h2>
-                <div class="flex gap-4">
-                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-print"></i> طباعة تقرير الكادر
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-print"></i> طباعة تقارير الكادر الكاملة
                     </button>
-                    <button onclick="exportBackupData()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-download"></i> تصدير نسخة احتياطية
+                    <button onclick="exportBackupData()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-download"></i> تصدير نسخة احتياطية (JSON)
                     </button>
                 </div>
             </div>
@@ -336,6 +359,32 @@
 
     </main>
 
+    <!-- مودال (صفحة بطاقة المعلم المستقلة للطباعة) -->
+    <div id="teacherCardModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 space-y-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeTeacherCard()" class="no-print absolute top-4 left-4 text-slate-400 hover:text-slate-700 text-xl font-bold">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="text-center border-b pb-4 space-y-1">
+                <h3 class="text-lg font-extrabold text-slate-900" id="cardSchoolName">مدرسة النسمات الابتدائية للبنين</h3>
+                <p class="text-xs text-slate-500" id="cardDirectorate">المديرية العامة للتربية في محافظة ذي قار</p>
+                <h4 class="text-base font-bold text-indigo-600 mt-2">بطاقة التعريف الوظيفية للمعلم</h4>
+            </div>
+
+            <div id="cardContentGrid" class="grid grid-cols-2 gap-3 text-xs">
+                <!-- تعبئة ديناميكية -->
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t no-print">
+                <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> طباعة البطاقة
+                </button>
+                <button onclick="closeTeacherCard()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-4 mt-auto no-print">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between text-xs gap-2">
@@ -369,6 +418,9 @@
                 const adminTitle = document.getElementById('adminFormTitle');
                 if (adminTitle) adminTitle.classList.add('hidden');
 
+                const importBox = document.getElementById('importTeacherBox');
+                if (importBox) importBox.classList.add('hidden');
+
                 const welcomeBanner = document.getElementById('teacherWelcomeBanner');
                 if (welcomeBanner) welcomeBanner.classList.remove('hidden');
 
@@ -383,7 +435,7 @@
         }
 
         function initDB() {
-            const req = indexedDB.open("TeachersPlatformDB", 11);
+            const req = indexedDB.open("TeachersPlatformDB", 12);
             req.onupgradeneeded = (e) => {
                 db = e.target.result;
                 if (!db.objectStoreNames.contains("teachers")) db.createObjectStore("teachers", { keyPath: "id", autoIncrement: true });
@@ -467,8 +519,6 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-bold'));
             const target = document.getElementById(tabId);
             if (target) target.classList.add('active');
-            
-            // إذا انتقل المستخدم إلى سجل المعلمين أو لوحة التحكم، نقوم بتحديث البيانات فوراً
             if (tabId === 'teachers' || tabId === 'dashboard') {
                 loadTeachersData();
             }
@@ -483,17 +533,17 @@
                 birthDate: document.getElementById('tBirthDate').value,
                 jobNumber: document.getElementById('tJobNumber').value,
                 jobTitle: document.getElementById('tJobTitle').value,
-                adminPosition: document.getElementById('tAdminPosition').value,
+                adminPosition: document.getElementById('tAdminPosition').value || 'لا يوجد',
                 degree: document.getElementById('tDegree').value,
                 major: document.getElementById('tMajor').value,
-                gradYear: document.getElementById('tGradYear').value,
-                hireDate: document.getElementById('tHireDate').value,
-                firstStart: document.getElementById('tFirstStart').value,
-                currentSchoolStart: document.getElementById('tCurrentSchoolStart').value,
+                gradYear: document.getElementById('tGradYear').value || 'غير محدد',
+                hireDate: document.getElementById('tHireDate').value || 'غير محدد',
+                firstStart: document.getElementById('tFirstStart').value || 'غير محدد',
+                currentSchoolStart: document.getElementById('tCurrentSchoolStart').value || 'غير محدد',
                 socialStatus: document.getElementById('tSocialStatus').value,
-                childrenCount: document.getElementById('tChildrenCount').value,
-                promotionDate: document.getElementById('tPromotionDate').value,
-                allowanceDate: document.getElementById('tAllowanceDate').value,
+                childrenCount: document.getElementById('tChildrenCount').value || '0',
+                promotionDate: document.getElementById('tPromotionDate').value || 'غير محدد',
+                allowanceDate: document.getElementById('tAllowanceDate').value || 'غير محدد',
                 address: document.getElementById('tAddress').value,
                 createdAt: new Date().toISOString()
             };
@@ -503,24 +553,48 @@
             store.add(teacherData);
             
             tx.oncomplete = () => {
-                // حفظ نسخة احتياطية في localStorage لتحديث السجل والتقارير فوراً
                 let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
                 localList.push(teacherData);
                 localStorage.setItem('teachers_backup_list', JSON.stringify(localList));
 
                 if (isTeacherMode) {
-                    document.body.innerHTML = `<div style="text-align:center; margin-top:100px; font-family:Cairo; padding:20px;">
+                    const jsonString = JSON.stringify(teacherData);
+                    document.body.innerHTML = `<div style="text-align:center; margin-top:60px; font-family:Cairo; padding:20px; max-width:600px; margin-left:auto; margin-right:auto;">
                         <i class="fa-solid fa-circle-check" style="font-size:60px; color:green; margin-bottom:20px;"></i>
                         <h2 style="font-size:22px; font-weight:bold; color:#1e293b;">تم إرسال بياناتك بنجاح تام!</h2>
-                        <p style="color:#64748b; margin-top:10px;">شكراً لك أستاذنا الفاضل. تم إرسال معلوماتك وتخزينها في المنصة لدى الإدارة.</p>
+                        <p style="color:#64748b; margin-top:10px; font-size:14px;">شكراً لك أستاذنا الفاضل. يرجى نسخ النص أدناه وإرساله إلى إدارة المدرسة عبر الواتساب لتأكيد التسجيل الفوري:</p>
+                        <textarea readonly style="width:100%; height:100px; margin-top:15px; padding:10px; font-family:monospace; font-size:11px; border:1px solid #cbd5e1; border-radius:10px;">${jsonString}</textarea>
+                        <button onclick="navigator.clipboard.writeText('${jsonString}').then(()=>alert('تم نسخ البيانات بنجاح!'))" style="margin-top:15px; background:#4f46e5; color:white; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">نسخ البيانات للإرسال</button>
                     </div>`;
                 } else {
-                    alert("تم حفظ بيانات المعلم بنجاح وإضافته إلى سجل الكادر!");
+                    alert("تم حفظ بيانات المعلم بنجاح وإضافته إلى السجل الشامل!");
                     document.getElementById('teacherForm').reset();
                     loadTeachersData();
                     switchTab('dashboard');
                 }
             };
+        }
+
+        function importTeacherData() {
+            const inputVal = document.getElementById('importJsonInput').value.trim();
+            if(!inputVal) { alert("يرجى لصق بيانات المعلم أولاً"); return; }
+            try {
+                const teacherObj = JSON.parse(inputVal);
+                const tx = db.transaction(["teachers"], "readwrite");
+                const store = tx.objectStore("teachers");
+                store.add(teacherObj);
+                tx.oncomplete = () => {
+                    let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
+                    localList.push(teacherObj);
+                    localStorage.setItem('teachers_backup_list', JSON.stringify(localList));
+                    alert("تم إدراج بيانات المعلم بنجاح في السجل الشامل!");
+                    document.getElementById('importJsonInput').value = '';
+                    loadTeachersData();
+                    switchTab('teachers');
+                };
+            } catch(e) {
+                alert("صيغة البيانات غير صحيحة، تأكد من لصق النص بشكل سليم.");
+            }
         }
 
         function loadTeachersData() {
@@ -529,13 +603,11 @@
             const req = tx.objectStore("teachers").getAll();
             req.onsuccess = () => {
                 let list = req.result || [];
-                
-                // دمج البيانات مع الـ localStorage لضمان تكامل السجل والتقارير
                 let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
+                
                 if(localList.length > 0 && list.length === 0) {
                     list = localList;
                 } else if(localList.length > 0) {
-                    // دمج فريد لتجنب التكرار
                     const existingIds = new Set(list.map(t => t.jobNumber));
                     localList.forEach(t => {
                         if (!existingIds.has(t.jobNumber)) {
@@ -552,7 +624,7 @@
 
                 if (tbody) {
                     if (list.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>`;
                     } else {
                         tbody.innerHTML = list.map(t => `
                             <tr class="hover:bg-slate-50">
@@ -561,6 +633,9 @@
                                 <td class="p-3">${t.jobTitle} (${t.degree})</td>
                                 <td class="p-3 font-mono text-xs">${t.promotionDate || 'غير محدد'}</td>
                                 <td class="p-3"><span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">${t.socialStatus}</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick='openTeacherCard(${JSON.stringify(t)})' class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-xs font-bold">عرض البطاقة</button>
+                                </td>
                             </tr>
                         `).join('');
                     }
@@ -568,21 +643,56 @@
 
                 if (fullTbody) {
                     if (list.length === 0) {
-                        fullTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد بيانات مسجلة حالياً</td></tr>`;
+                        fullTbody.innerHTML = `<tr><td colspan="12" class="p-4 text-center text-slate-400">لا توجد بيانات مسجلة حالياً</td></tr>`;
                     } else {
                         fullTbody.innerHTML = list.map(t => `
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-3 font-bold text-slate-800">${t.name}</td>
-                                <td class="p-3">${t.motherName}</td>
-                                <td class="p-3 font-mono">${t.jobNumber}</td>
-                                <td class="p-3">${t.jobTitle}</td>
-                                <td class="p-3">${t.degree} - ${t.major}</td>
-                                <td class="p-3 text-xs text-slate-600">${t.address}</td>
+                            <tr class="hover:bg-slate-50 text-right">
+                                <td class="p-2.5 font-bold text-slate-800">${t.name}</td>
+                                <td class="p-2.5">${t.motherName}</td>
+                                <td class="p-2.5 font-mono">${t.birthDate}</td>
+                                <td class="p-2.5 font-mono font-bold text-indigo-600">${t.jobNumber}</td>
+                                <td class="p-2.5">${t.jobTitle}</td>
+                                <td class="p-2.5">${t.adminPosition}</td>
+                                <td class="p-2.5">${t.degree} / ${t.major} (${t.gradYear})</td>
+                                <td class="p-2.5 font-mono">${t.hireDate}</td>
+                                <td class="p-2.5">${t.socialStatus} (${t.childrenCount} أطفال)</td>
+                                <td class="p-2.5 font-mono text-xs">ترفيع: ${t.promotionDate}<br>علاوة: ${t.allowanceDate}</td>
+                                <td class="p-2.5">${t.address}</td>
+                                <td class="p-2.5 text-center no-print">
+                                    <button onclick='openTeacherCard(${JSON.stringify(t)})' class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-2 py-1 rounded text-[11px] font-bold">بطاقة</button>
+                                </td>
                             </tr>
                         `).join('');
                     }
                 }
             };
+        }
+
+        function openTeacherCard(t) {
+            document.getElementById('cardSchoolName').innerText = schoolConfig.schoolName;
+            document.getElementById('cardDirectorate').innerText = schoolConfig.directorate + " - " + schoolConfig.subDirectorate;
+            
+            const grid = document.getElementById('cardContentGrid');
+            grid.innerHTML = `
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>الاسم الرباعي واللقب:</strong> ${t.name}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>اسم الأم الثلاثي:</strong> ${t.motherName}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>تاريخ الميلاد:</strong> ${t.birthDate}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>الرقم الوظيفي:</strong> ${t.jobNumber}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>العنوان الوظيفي:</strong> ${t.jobTitle}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>المنصب الإداري:</strong> ${t.adminPosition}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>الشهادة والاختصاص:</strong> ${t.degree} - ${t.major}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>سنة التخرج:</strong> ${t.gradYear}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>تاريخ التعيين والمباشرة:</strong> ${t.hireDate}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>الحالة الاجتماعية:</strong> ${t.socialStatus} (${t.childrenCount} أطفال)</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>استحقاق الترفيع:</strong> ${t.promotionDate}</div>
+                <div class="p-2 bg-slate-50 rounded-xl border"><strong>استحقاق العلاوة:</strong> ${t.allowanceDate}</div>
+                <div class="col-span-2 p-2 bg-slate-50 rounded-xl border"><strong>عنوان السكن بالتفصيل:</strong> ${t.address}</div>
+            `;
+            document.getElementById('teacherCardModal').classList.remove('hidden');
+        }
+
+        function closeTeacherCard() {
+            document.getElementById('teacherCardModal').classList.add('hidden');
         }
 
         function exportBackupData() {

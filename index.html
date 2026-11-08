@@ -57,7 +57,7 @@
         </div>
     </header>
 
-    <!-- Navigation Bar / شريط التبويبات الرئيسي (يحذف تلقائياً للمعلم عبر كود الدعوة) -->
+    <!-- Navigation Bar / شريط التبويبات الرئيسي -->
     <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40 no-print" id="mainAdminNav">
         <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 py-2">
             <button onclick="switchTab('dashboard')" class="tab-btn bg-indigo-50 text-indigo-700 font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap active-tab">
@@ -126,7 +126,23 @@
         <section id="teachers" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <h2 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-3">سجل الكادر الكامل</h2>
-                <div id="fullTeachersListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">الاسم الرباعي</th>
+                                <th class="p-3">اسم الأم</th>
+                                <th class="p-3">الرقم الوظيفي</th>
+                                <th class="p-3">العنوان الوظيفي</th>
+                                <th class="p-3">الشهادة والاختصاص</th>
+                                <th class="p-3">السكن</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fullTeachersTableBody" class="divide-y divide-slate-200">
+                            <tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد بيانات مسجلة حالياً</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -273,7 +289,14 @@
         <section id="reports" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <h2 class="text-xl font-bold text-slate-800">التقارير المكتملة والنسخ الاحتياطي</h2>
-                <button onclick="window.print()" class="bg-indigo-600 text-white font-bold px-4 py-2 rounded-lg text-xs">طباعة تقرير الكادر</button>
+                <div class="flex gap-4">
+                    <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> طباعة تقرير الكادر
+                    </button>
+                    <button onclick="exportBackupData()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> تصدير نسخة احتياطية
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -332,7 +355,6 @@
             logo: ""
         };
         
-        // تم تثبيت رابط المستودع الحقيقي بدقة متناهية وبدون مسافات
         const FIXED_BASE_URL = "https://mohammed-aldaraji.github.io/teachers-2026/";
 
         function checkRouting() {
@@ -361,7 +383,7 @@
         }
 
         function initDB() {
-            const req = indexedDB.open("TeachersPlatformDB", 9);
+            const req = indexedDB.open("TeachersPlatformDB", 10);
             req.onupgradeneeded = (e) => {
                 db = e.target.result;
                 if (!db.objectStoreNames.contains("teachers")) db.createObjectStore("teachers", { keyPath: "id", autoIncrement: true });
@@ -442,6 +464,7 @@
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-bold'));
             const target = document.getElementById(tabId);
             if (target) target.classList.add('active');
         }
@@ -449,6 +472,7 @@
         function saveTeacherData(e) {
             e.preventDefault();
             const teacherData = {
+                id: Date.now(),
                 name: document.getElementById('tName').value,
                 motherName: document.getElementById('tMotherName').value,
                 birthDate: document.getElementById('tBirthDate').value,
@@ -474,6 +498,11 @@
             store.add(teacherData);
             
             tx.oncomplete = () => {
+                // حفظ نسخة احتياطية في localStorage لضمان ظهورها الفوري في السجل والتقارير
+                let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
+                localList.push(teacherData);
+                localStorage.setItem('teachers_backup_list', JSON.stringify(localList));
+
                 if (isTeacherMode) {
                     document.body.innerHTML = `<div style="text-align:center; margin-top:100px; font-family:Cairo; padding:20px;">
                         <i class="fa-solid fa-circle-check" style="font-size:60px; color:green; margin-bottom:20px;"></i>
@@ -494,27 +523,64 @@
             const tx = db.transaction(["teachers"], "readonly");
             const req = tx.objectStore("teachers").getAll();
             req.onsuccess = () => {
-                const list = req.result || [];
+                let list = req.result || [];
+                
+                // دمج البيانات مع الـ localStorage لضمان تكامل السجل والتقارير
+                let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
+                if(localList.length > 0 && list.length === 0) {
+                    list = localList;
+                }
+
                 const statEl = document.getElementById('statTotalTeachers');
                 if (statEl) statEl.innerText = list.length;
                 
                 const tbody = document.getElementById('teachersTableBody');
+                const fullTbody = document.getElementById('fullTeachersTableBody');
+
                 if (tbody) {
                     if (list.length === 0) {
                         tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">لا يوجد معلمون مسجلون حالياً</td></tr>`;
-                        return;
+                    } else {
+                        tbody.innerHTML = list.map(t => `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-bold text-slate-800">${t.name}</td>
+                                <td class="p-3 font-mono">${t.jobNumber}</td>
+                                <td class="p-3">${t.jobTitle} (${t.degree})</td>
+                                <td class="p-3 font-mono text-xs">${t.promotionDate || 'غير محدد'}</td>
+                                <td class="p-3"><span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">${t.socialStatus}</span></td>
+                            </tr>
+                        `).join('');
                     }
-                    tbody.innerHTML = list.map(t => `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-3 font-bold text-slate-800">${t.name}</td>
-                            <td class="p-3 font-mono">${t.jobNumber}</td>
-                            <td class="p-3">${t.jobTitle} (${t.degree})</td>
-                            <td class="p-3 font-mono text-xs">${t.promotionDate || 'غير محدد'}</td>
-                            <td class="p-3"><span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">${t.socialStatus}</span></td>
-                        </tr>
-                    `).join('');
+                }
+
+                if (fullTbody) {
+                    if (list.length === 0) {
+                        fullTbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">لا توجد بيانات مسجلة حالياً</td></tr>`;
+                    } else {
+                        fullTbody.innerHTML = list.map(t => `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-bold text-slate-800">${t.name}</td>
+                                <td class="p-3">${t.motherName}</td>
+                                <td class="p-3 font-mono">${t.jobNumber}</td>
+                                <td class="p-3">${t.jobTitle}</td>
+                                <td class="p-3">${t.degree} - ${t.major}</td>
+                                <td class="p-3 text-xs text-slate-600">${t.address}</td>
+                            </tr>
+                        `).join('');
+                    }
                 }
             };
+        }
+
+        function exportBackupData() {
+            let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(localList, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "teachers_backup.json");
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
         }
 
         function generateInvitationCard() {

@@ -57,7 +57,7 @@
         </div>
     </header>
 
-    <!-- Navigation Bar / شريط التبويبات الرئيسي (يحذف تلقائياً عند فتح رابط دعوة المعلم) -->
+    <!-- Navigation Bar / شريط التبويبات الرئيسي -->
     <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40 no-print" id="mainAdminNav">
         <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto gap-2 py-2">
             <button onclick="switchTab('dashboard')" class="tab-btn bg-indigo-50 text-indigo-700 font-bold px-4 py-2 rounded-lg text-sm flex items-center gap-2 whitespace-nowrap active-tab">
@@ -130,7 +130,7 @@
             </div>
         </section>
 
-        <!-- TAB: ADD TEACHER (استمارة إدخال البيانات) -->
+        <!-- TAB: ADD TEACHER -->
         <section id="add-teacher" class="tab-content space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
                 
@@ -331,7 +331,9 @@
             schoolName: "مدرسة النسمات الابتدائية للبنين",
             logo: ""
         };
-        const FIXED_BASE_URL = "https://mohammed-aldaraji.github.io/teachers-2026/";
+        
+        // تم تصحيح اسم المستودع بدقة تامة وبدون أي فراغات ليكون مطابقاً تماماً لرابط الاستضافة
+        const FIXED_BASE_URL = "https://mohammed-aldaraji.github.io/teachers-platform2026/";
 
         function checkRouting() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -359,7 +361,7 @@
         }
 
         function initDB() {
-            const req = indexedDB.open("TeachersPlatformDB", 6);
+            const req = indexedDB.open("TeachersPlatformDB", 8);
             req.onupgradeneeded = (e) => {
                 db = e.target.result;
                 if (!db.objectStoreNames.contains("teachers")) db.createObjectStore("teachers", { keyPath: "id", autoIncrement: true });

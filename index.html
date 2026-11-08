@@ -383,7 +383,7 @@
         }
 
         function initDB() {
-            const req = indexedDB.open("TeachersPlatformDB", 10);
+            const req = indexedDB.open("TeachersPlatformDB", 11);
             req.onupgradeneeded = (e) => {
                 db = e.target.result;
                 if (!db.objectStoreNames.contains("teachers")) db.createObjectStore("teachers", { keyPath: "id", autoIncrement: true });
@@ -467,6 +467,11 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'font-bold'));
             const target = document.getElementById(tabId);
             if (target) target.classList.add('active');
+            
+            // إذا انتقل المستخدم إلى سجل المعلمين أو لوحة التحكم، نقوم بتحديث البيانات فوراً
+            if (tabId === 'teachers' || tabId === 'dashboard') {
+                loadTeachersData();
+            }
         }
 
         function saveTeacherData(e) {
@@ -498,7 +503,7 @@
             store.add(teacherData);
             
             tx.oncomplete = () => {
-                // حفظ نسخة احتياطية في localStorage لضمان ظهورها الفوري في السجل والتقارير
+                // حفظ نسخة احتياطية في localStorage لتحديث السجل والتقارير فوراً
                 let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
                 localList.push(teacherData);
                 localStorage.setItem('teachers_backup_list', JSON.stringify(localList));
@@ -529,6 +534,14 @@
                 let localList = JSON.parse(localStorage.getItem('teachers_backup_list') || '[]');
                 if(localList.length > 0 && list.length === 0) {
                     list = localList;
+                } else if(localList.length > 0) {
+                    // دمج فريد لتجنب التكرار
+                    const existingIds = new Set(list.map(t => t.jobNumber));
+                    localList.forEach(t => {
+                        if (!existingIds.has(t.jobNumber)) {
+                            list.push(t);
+                        }
+                    });
                 }
 
                 const statEl = document.getElementById('statTotalTeachers');
